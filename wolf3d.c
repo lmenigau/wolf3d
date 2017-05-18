@@ -6,7 +6,7 @@
 /*   By: lmenigau <lmenigau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/09 03:50:26 by lmenigau          #+#    #+#             */
-/*   Updated: 2017/05/18 21:08:29 by lmenigau         ###   ########.fr       */
+/*   Updated: 2017/05/18 21:18:01 by lmenigau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,6 @@ void	draw_wall(t_world *world, t_player *player, t_vec ray, t_vec hit, int col)
 		y++;
 	}
 }
-
 void	raycast(t_world *world, t_player *playe)
 {
 	int		x;
@@ -189,7 +188,6 @@ t_vec		vec_rot(t_vec vec, float angle)
 
 	res.x = vec.x * cos(angle) - vec.y * sin(angle);
 	res.y = vec.x * sin(angle) + vec.y * cos(angle);
-
 	return (res);
 }
 
@@ -209,16 +207,15 @@ void	key_hook(int keycode, t_data *data)
 		data->player.pos.x -= data->player.dir.x;
 		render(data);
 	}
-	if (keycode == 124)
-	{
-		data->player.dir =  vec_rot(data->player.dir, -.1);
-		data->player.cam =  vec_rot(data->player.cam, -.1);
+	if (keycode == 124) {
+		data->player.dir =  vec_rot(data->player.dir, -0.1);
+		data->player.cam =  vec_rot(data->player.cam, -0.1);
 		render(data);
 	}
 	if (keycode == 123)
 	{
-		data->player.dir =  vec_rot(data->player.dir, .1);
-		data->player.cam =  vec_rot(data->player.cam, .1);
+		data->player.dir =  vec_rot(data->player.dir, 0.1);
+		data->player.cam =  vec_rot(data->player.cam, 0.1);
 		render(data);
 	}
 }
