@@ -6,7 +6,7 @@
 /*   By: lmenigau <lmenigau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/09 03:50:26 by lmenigau          #+#    #+#             */
-/*   Updated: 2017/05/16 10:45:25 by lmenigau         ###   ########.fr       */
+/*   Updated: 2017/05/18 21:08:29 by lmenigau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,8 +183,17 @@ void		render(t_data *data)
 	mlx_destroy_image(data->mlx, img);
 }
 
+t_vec		vec_rot(t_vec vec, float angle)
+{
+	t_vec	res;
 
-void		key_hook(int keycode, t_data *data)
+	res.x = vec.x * cos(angle) - vec.y * sin(angle);
+	res.y = vec.x * sin(angle) + vec.y * cos(angle);
+
+	return (res);
+}
+
+void	key_hook(int keycode, t_data *data)
 {
 	printf("%d\n", keycode);
 	if (keycode == 126)
@@ -200,7 +209,19 @@ void		key_hook(int keycode, t_data *data)
 		data->player.pos.x -= data->player.dir.x;
 		render(data);
 	}
-};
+	if (keycode == 124)
+	{
+		data->player.dir =  vec_rot(data->player.dir, -.1);
+		data->player.cam =  vec_rot(data->player.cam, -.1);
+		render(data);
+	}
+	if (keycode == 123)
+	{
+		data->player.dir =  vec_rot(data->player.dir, .1);
+		data->player.cam =  vec_rot(data->player.cam, .1);
+		render(data);
+	}
+}
 
 int			main(int	argc, char **argv)
 {
