@@ -6,7 +6,7 @@
 /*   By: lmenigau <lmenigau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/09 03:50:26 by lmenigau          #+#    #+#             */
-/*   Updated: 2017/05/18 21:18:01 by lmenigau         ###   ########.fr       */
+/*   Updated: 2017/05/23 10:28:59 by lmenigau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ t_vec		dda(t_world *world, t_vec ray, t_vec delta)
 	{
 		if(map[lroundf(ray.y)][lroundf(ray.x)] != ' ')
 		{
-			printf("charhti: %hhd\n", map[(int)(ray.y)][lroundf(ray.x)]);
+			printf("charhti: %hhd\n", map[lroundf(ray.y)][lroundf(ray.x)]);
 			printf("ray: %f %f\n", ray.x, ray.y);
 			return (ray);
 		}
@@ -85,21 +85,25 @@ void	raycast(t_world *world, t_player *playe)
 		{
 			deltay.x /= fabsf(deltay.x);
 			deltay.y /= fabsf(deltay.x);
+			ray.x = roundf(ray.x);
 		}
 		else
 		{
 			deltay.x /= fabsf(deltay.y);
 			deltay.y /= fabsf(deltay.y);
+			ray.y = roundf(ray.y);
 		}
 		if (fabsf(delta.x) >= fabsf(delta.y))
 		{
 			delta.x /= fabsf(delta.x);
 			delta.y /= fabsf(delta.x);
+			ray.x = roundf(ray.x);
 		}
 		else
 		{
 			delta.x /= fabsf(delta.y);
 			delta.y /= fabsf(delta.y);
+			ray.y = roundf(ray.y);
 		}
 		printf("delta: %f, %f", delta.x, delta.y);
 		printf("deltay: %f, %f\n", deltay.x, deltay.y);
@@ -109,62 +113,6 @@ void	raycast(t_world *world, t_player *playe)
 		draw_wall(world, playe, ray, hit, x);
 		x++;
 	}
-}
-
-char	*init_world()
-{
-	const static char	map[50][50] = {
-		{"                                                  "},
-		{"                                                  "},
-		{"                                                  "},
-		{"                                                  "},
-		{"                                                  "},
-		{"                                                  "},
-		{"                                                  "},
-		{"                                                  "},
-		{"                  x  x  x    x x                  "},
-		{"                                                  "},
-		{"                                                  "},
-		{"                             x                    "},
-		{"                             x                    "},
-		{"                             x                    "},
-		{"                             x                    "},
-		{"                             x                    "},
-		{"                             x                    "},
-		{"                             x                    "},
-		{"                             x                    "},
-		{"                             x                    "},
-		{"                             x                    "},
-		{"                             x                    "},
-		{"                             x                    "},
-		{"                             x                    "},
-		{"                             x                    "},
-		{"                             x                    "},
-		{"                             x                    "},
-		{"                             x                    "},
-		{"                             x                    "},
-		{"                             x                    "},
-		{"                             x                    "},
-		{"                             x                    "},
-		{"                             x                    "},
-		{"                                                  "},
-		{"                                                  "},
-		{"                                                  "},
-		{"                                                  "},
-		{"                                                  "},
-		{"                                                  "},
-		{"                                                  "},
-		{"                                                  "},
-		{"                                                  "},
-		{"                                                  "},
-		{"                                                  "},
-		{"                                                  "},
-		{"                                                  "},
-		{"                                                  "},
-		{"                                                  "},
-		{"                                                  "},
-		{"                                                  "}};
-	return ((char *)&map);
 }
 
 void		render(t_data *data)

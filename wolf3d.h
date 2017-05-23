@@ -6,7 +6,7 @@
 /*   By: lmenigau <lmenigau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/09 03:52:26 by lmenigau          #+#    #+#             */
-/*   Updated: 2017/05/11 10:35:14 by lmenigau         ###   ########.fr       */
+/*   Updated: 2017/05/22 21:08:55 by lmenigau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,4 +46,6 @@ typedef struct	s_data
 	t_world		world;
 	t_player	player;
 }				t_data;
+
+char	*init_world();
 #endif

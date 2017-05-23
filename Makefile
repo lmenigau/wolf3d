@@ -6,12 +6,12 @@
 #*   By: lmenigau <lmenigau@student.42.fr>          +#+  +:+       +#+        *#
 #*                                                +#+#+#+#+#+   +#+           *#
 #*   Created: 2016/11/18 02:18:30 by lmenigau          #+#    #+#             *#
-#*   Updated: 2017/05/11 23:42:36 by lmenigau         ###   ########.fr       *#
+#*   Updated: 2017/05/22 21:08:09 by lmenigau         ###   ########.fr       *#
 #*                                                                            *#
 #* ************************************************************************** *#
 
 NAME	= wolf3d
-SRC		= wolf3d.c
+SRC		= wolf3d.c map.c
 OBJ		= $(SRC:.c=.o)
 CFLAGS	= -Wall -Wextra -Werror -Ilibft/ -I../minilibx_macos/ -fsanitize=address
 LFLAGS	= -lmlx -framework Appkit -framework OpenGl
