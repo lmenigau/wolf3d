@@ -6,7 +6,7 @@
 /*   By: lmenigau <lmenigau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/09 03:50:26 by lmenigau          #+#    #+#             */
-/*   Updated: 2017/05/23 10:28:59 by lmenigau         ###   ########.fr       */
+/*   Updated: 2017/05/24 20:33:12 by lmenigau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,11 @@ t_vec		dda(t_world *world, t_vec ray, t_vec delta)
 	char	(*map)[(int)world->size.x];
 
 	map = (char (*)[])world->map;
+
 	while (ray.x >= 0 && ray.x < world->size.x - 1
 			&& ray.y >= 0 && ray.y < world->size.y  -1)
 	{
-		if(map[lroundf(ray.y)][lroundf(ray.x)] != ' ')
+		if(map[(lroundf)(ray.y)][(lroundf)(ray.x)] != ' ')
 		{
 			printf("charhti: %hhd\n", map[lroundf(ray.y)][lroundf(ray.x)]);
 			printf("ray: %f %f\n", ray.x, ray.y);
@@ -35,7 +36,7 @@ t_vec		dda(t_world *world, t_vec ray, t_vec delta)
 	return (ray);
 }
 
-void	draw_wall(t_world *world, t_player *player, t_vec ray, t_vec hit, int col)
+void	draw_wall(t_world *world, t_player *player, t_vec ray, t_vec hit, int col, int color)
 {
 	int 	len;
 	float	lenray;
@@ -47,17 +48,12 @@ void	draw_wall(t_world *world, t_player *player, t_vec ray, t_vec hit, int col)
 	total.y = fabsf(hit.y - player->pos.y);
 	lenray = sqrtf(total.x * total.x + total.y * total.y);
 //	printf("%f, %f\n", ray.x, ray.y);
-	len =  ((float)WIN_H / lenray);
-	//printf("%f\n", lenray);
-	if (len != 42)
-	{
-		//printf("%d\n", len);
-		//printf("%f %f\n", hit.x, hit.y);
-	}
+	len =  ((float)WIN_H / lenray * WIN_W / WIN_H);
+	printf("%f\n", lenray);
 	y = (WIN_H / 2) - len / 2;
 	while (y >= 0 && y < WIN_H && y <= len / 2 + WIN_H / 2)
 	{
-		world->screen[y][col] = 0xFFFF;
+		world->screen[y][col] = color;
 		y++;
 	}
 }
@@ -68,6 +64,7 @@ void	raycast(t_world *world, t_player *playe)
 	t_vec	delta;
 	t_vec	deltay;
 	t_vec	hit;
+	t_vec save;
 
 	x = 0;
 	while (x < WIN_W)
@@ -85,32 +82,34 @@ void	raycast(t_world *world, t_player *playe)
 		{
 			deltay.x /= fabsf(deltay.x);
 			deltay.y /= fabsf(deltay.x);
-			ray.x = roundf(ray.x);
+			save.x = (ceilf)(ray.x);
+			save.y += (ceilf)(ray.y) - ray.y;
 		}
 		else
 		{
 			deltay.x /= fabsf(deltay.y);
 			deltay.y /= fabsf(deltay.y);
-			ray.y = roundf(ray.y);
+			save.y = (ceilf)(ray.y);
+			save.x += (ceilf)(ray.x) - ray.x;
 		}
+		hit = dda(world, save, (t_vec){deltay.y, deltay.x});
+		draw_wall(world, playe, save, hit, x, 0xFF);
+		printf("dfiawe%f, %f\n", deltay.x, deltay.y);
 		if (fabsf(delta.x) >= fabsf(delta.y))
 		{
 			delta.x /= fabsf(delta.x);
 			delta.y /= fabsf(delta.x);
-			ray.x = roundf(ray.x);
+			ray.x = (ceilf)(ray.x);
+			ray.y += (ceilf)(ray.y) - ray.y;
 		}
 		else
 		{
 			delta.x /= fabsf(delta.y);
 			delta.y /= fabsf(delta.y);
-			ray.y = roundf(ray.y);
+			ray.x += (ceilf)(ray.x) - ray.x;
 		}
-		printf("delta: %f, %f", delta.x, delta.y);
-		printf("deltay: %f, %f\n", deltay.x, deltay.y);
 		hit = dda(world, ray, delta);
-		draw_wall(world, playe, ray, hit, x);
-		hit = dda(world, (t_vec){ray.x, ray.y}, (t_vec){deltay.y, deltay.x});
-		draw_wall(world, playe, ray, hit, x);
+		draw_wall(world, playe, ray, hit, x, 0xFFFF);
 		x++;
 	}
 }
