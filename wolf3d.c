@@ -25,8 +25,8 @@ t_vec		dda(t_world *world, t_vec ray, t_vec delta)
 	{
 		if(map[(lroundf)(ray.y)][(lroundf)(ray.x)] != ' ')
 		{
-			printf("charhti: %hhd\n", map[lroundf(ray.y)][lroundf(ray.x)]);
-			printf("ray: %f %f\n", ray.x, ray.y);
+			//printf("charhti: %hhd\n", map[lroundf(ray.y)][lroundf(ray.x)]);
+			//printf("ray: %f %f\n", ray.x, ray.y);
 			return (ray);
 		}
 		ray.x += delta.x;
@@ -49,7 +49,7 @@ void	draw_wall(t_world *world, t_player *player, t_vec ray, t_vec hit, int col, 
 	lenray = sqrtf(total.x * total.x + total.y * total.y);
 //	printf("%f, %f\n", ray.x, ray.y);
 	len =  ((float)WIN_H / lenray * WIN_W / WIN_H);
-	printf("%f\n", lenray);
+	//printf("%f\n", lenray);
 	y = (WIN_H / 2) - len / 2;
 	while (y >= 0 && y < WIN_H && y <= len / 2 + WIN_H / 2)
 	{
@@ -82,31 +82,32 @@ void	raycast(t_world *world, t_player *playe)
 		{
 			deltay.x /= fabsf(deltay.x);
 			deltay.y /= fabsf(deltay.x);
-			save.x = (ceilf)(ray.x);
-			save.y += (ceilf)(ray.y) - ray.y;
+			save.x = (floorf)(ray.x);
+			save.y += (floorf)(ray.y) - ray.y;
 		}
 		else
 		{
 			deltay.x /= fabsf(deltay.y);
 			deltay.y /= fabsf(deltay.y);
-			save.y = (ceilf)(ray.y);
-			save.x += (ceilf)(ray.x) - ray.x;
+			save.y = (floorf)(ray.y);
+			save.x += (floorf)(ray.x) - ray.x;
 		}
 		hit = dda(world, save, (t_vec){deltay.y, deltay.x});
 		draw_wall(world, playe, save, hit, x, 0xFF);
-		printf("dfiawe%f, %f\n", deltay.x, deltay.y);
+		//printf("dfiawe%f, %f\n", deltay.x, deltay.y);
 		if (fabsf(delta.x) >= fabsf(delta.y))
 		{
 			delta.x /= fabsf(delta.x);
 			delta.y /= fabsf(delta.x);
-			ray.x = (ceilf)(ray.x);
-			ray.y += (ceilf)(ray.y) - ray.y;
+			ray.x = (floorf)(ray.x);
+			ray.y += (floorf)(ray.y) - ray.y;
 		}
 		else
 		{
 			delta.x /= fabsf(delta.y);
 			delta.y /= fabsf(delta.y);
-			ray.x += (ceilf)(ray.x) - ray.x;
+			ray.x += (floorf)(ray.x) - ray.x;
+			ray.y += floorf(ray.y);
 		}
 		hit = dda(world, ray, delta);
 		draw_wall(world, playe, ray, hit, x, 0xFFFF);
@@ -146,6 +147,7 @@ void	key_hook(int keycode, t_data *data)
 		data->player.pos.y += data->player.dir.y;
 		data->player.pos.x += data->player.dir.x;
 		printf("%f, %f\n", data->player.pos.x, data->player.pos.y);
+		printf("%f, %f\n", data->player.cam.x, data->player.cam.y);
 		render(data);
 	}
 	if (keycode == 125)
@@ -155,8 +157,8 @@ void	key_hook(int keycode, t_data *data)
 		render(data);
 	}
 	if (keycode == 124) {
-		data->player.dir =  vec_rot(data->player.dir, -0.1);
-		data->player.cam =  vec_rot(data->player.cam, -0.1);
+		data->player.dir =  vec_rot(data->player.dir, -0.025);
+		data->player.cam =  vec_rot(data->player.cam, -0.025);
 		render(data);
 	}
 	if (keycode == 123)
@@ -177,8 +179,8 @@ int			main(int	argc, char **argv)
 	data.world.map = init_world();
 	data.world.size = (t_vec){50, 50};
 	data.player.pos = (t_vec){25, 2};
-	data.player.dir = (t_vec){0, 0.5};
-	data.player.cam = (t_vec){1, 0};
+	data.player.dir = (t_vec){0, 2};
+	data.player.cam = (t_vec){4, 0};
 	data.mlx = mlx_init();
 	data.win = mlx_new_window(data.mlx, WIN_W, WIN_H, "wolf3d");
 	mlx_hook(data.win,2, 0, (int (*)())key_hook, &data);
