@@ -13,7 +13,7 @@
 NAME	= wolf3d
 SRC		= wolf3d.c map.c
 OBJ		= $(SRC:.c=.o)
-CFLAGS	= -Wall -Wextra -Werror -Ilibft/ -I../minilibx_macos/ -fsanitize=address -g
+CFLAGS	= -Wall -Wextra -Werror -Ilibft/ -I../minilibx_macos/ -g 
 LFLAGS	= -lmlx -framework Appkit -framework OpenGl
 LDFLAGS	= -Llibft/ -L../minilibx_macos/ 
 LIBDIR	= libft/

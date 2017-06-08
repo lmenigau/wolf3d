@@ -19,6 +19,12 @@
 # define	WIN_W	1920
 # define	WIN_H	1080
 
+typedef struct	s_ivec
+{
+	int		x;
+	int		y;
+}				t_ivec;
+
 typedef struct	s_vec
 {
 	float		x;
