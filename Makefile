@@ -11,7 +11,7 @@
 #* ************************************************************************** *#
 
 NAME	= wolf3d
-SRC		= wolf3d.c map.c
+SRC		= wolf3d.c map.c plotline.c
 OBJ		= $(SRC:.c=.o)
 CFLAGS	= -Wall -Wextra -Werror -Ilibft/ -I../minilibx_macos/ -g 
 LFLAGS	= -lmlx -framework Appkit -framework OpenGl

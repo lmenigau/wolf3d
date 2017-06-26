@@ -27,8 +27,8 @@ typedef struct	s_ivec
 
 typedef struct	s_vec
 {
-	float		x;
-	float		y;
+	double		x;
+	double		y;
 }				t_vec;
 
 typedef struct	s_player
@@ -43,12 +43,14 @@ typedef struct	s_world
 	t_vec	size;
 	char	*map;
 	int		(*screen)[WIN_W];
+	int		(*debug)[WIN_W];
 }				t_world;
 
 typedef struct	s_data
 {
 	void		*mlx;
 	void		*win;
+	void		*wind;
 	t_world		world;
 	t_player	player;
 }				t_data;
