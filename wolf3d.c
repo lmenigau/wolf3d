@@ -85,6 +85,8 @@ void	raycast(t_world *world, t_player *playe)
 	pos = playe->pos;
 	while (x < WIN_W)
 	{
+		 if (x == 960)
+			 x=961;
 		ray.x = playe->pos.x + playe->dir.x ;
 		ray.y = playe->pos.y + playe->dir.y ;
 		ray.x += playe->cam.x * ((x - WIN_W /2)/(double)WIN_W);
@@ -96,7 +98,6 @@ void	raycast(t_world *world, t_player *playe)
 		delta.x = slope.x * (diff.x / fabs(diff.x));
 		delta.y = diff.y / fabs(diff.y);
 		hit = dda(world, ray, delta);
-		plotline_vec(world->debug, (t_vec2){hit.x * 10 + 800, hit.y * 10 + 800}, (t_vec2){ray.x * 10 + 800, ray.y * 10 + 800});
 		delta.x = diff.x / fabs(diff.x);
 		delta.y = slope.y * (diff.y / fabs(diff.y));
 		hit2 = dda(world, ray, delta);
@@ -106,13 +107,20 @@ void	raycast(t_world *world, t_player *playe)
 			color = 0xffff;
 		int len1;
 		int len2;
-		(void)color;
 		len1 = distance(hit, ray);
 		len2 = distance(hit2, ray);
 		if (len1 < len2)
+		{
 			draw_wall(world, playe, ray, hit, x, color);
+			plotline_vec(world->debug, (t_vec2){hit.x * (1080/60), hit.y * (1080/60)},
+					(t_vec2){ray.x * (1080/60), ray.y * (1080 /60) }, color);
+		}
 		else
+		{
 			draw_wall(world, playe, ray, hit2, x, color);
+			plotline_vec(world->debug, (t_vec2){hit2.x * (1080/60), hit2.y * (1080/60)},
+					(t_vec2){ray.x * (1080/60), ray.y * (1080 /60) }, color);
+		}
 		x++;
 	}
 }
@@ -128,7 +136,7 @@ void		render(t_data *data)
 	img = mlx_new_image(data->mlx, WIN_W, WIN_H);
 	imgd = mlx_new_image(data->mlx, WIN_W, WIN_H);
 	world->screen = (int (*)[])mlx_get_data_addr(img, &shit, &shit, &shit);
-	world->debug = (int (*)[])mlx_get_data_addr(img, &shit, &shit, &shit);
+	world->debug = (int (*)[])mlx_get_data_addr(imgd, &shit, &shit, &shit);
 	raycast(&data->world, &data->player);
 	//	printf("End\n");
 	mlx_put_image_to_window(data->mlx, data->win, img, 0, 0);
@@ -150,15 +158,15 @@ void	key_hook(int keycode, t_data *data)
 	printf("%d\n", keycode);
 	if (keycode == 126)
 	{
-		data->player.pos.y += data->player.dir.y;
-		data->player.pos.x += data->player.dir.x;
+		data->player.pos.y += data->player.dir.y /3;
+		data->player.pos.x += data->player.dir.x /3;
 		printf("%f, %f\n", data->player.pos.x, data->player.pos.y);
 		render(data);
 	}
 	if (keycode == 125)
 	{
-		data->player.pos.y -= data->player.dir.y;
-		data->player.pos.x -= data->player.dir.x;
+		data->player.pos.y -= data->player.dir.y /3;
+		data->player.pos.x -= data->player.dir.x /3;
 		render(data);
 	}
 	if (keycode == 124) {
@@ -186,8 +194,8 @@ int			main(int	argc, char **argv)
 	data.world.map = init_world();
 	data.world.size = (t_vec){50, 50};
 	data.player.pos = (t_vec){25.1, 2.2};
-	data.player.dir = ((t_vec){0, 1});
-	data.player.cam = ((t_vec){1, 0});
+	data.player.dir = ((t_vec){0, 0.5});
+	data.player.cam = ((t_vec){0.5, 0});
 	data.mlx = mlx_init();
 	data.win = mlx_new_window(data.mlx, WIN_W, WIN_H, "wolf3d");
 	data.wind = mlx_new_window(data.mlx, WIN_W, WIN_H, "debug");

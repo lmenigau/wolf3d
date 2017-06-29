@@ -30,6 +30,6 @@ typedef struct	s_vec2
 int				ft_abs(int n);
 
 void			plotline_octant_vec(int (*img)[WIN_WIDTH], t_vec2 p0, t_vec2 p1,
-		int fsp);
-void			plotline_vec(int (*img)[WIN_WIDTH], t_vec2 p0, t_vec2 p1);
+		int fsp, int color);
+void			plotline_vec(int (*img)[WIN_WIDTH], t_vec2 p0, t_vec2 p1, int color);
 #endif

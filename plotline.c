@@ -12,8 +12,17 @@
 
 #include "fdf.h"
 
+void	ft_swap(int *a, int *b)
+{
+	int		c;
+
+	c = *a;
+	*a = *b;
+	*b = c;
+}
+
 void	plotline_octant_vec(int (*img)[WIN_WIDTH], t_vec2 p0, t_vec2 p1,
-		int fsp)
+		int fsp, int color)
 {
 	int		dx;
 	int		dy;
@@ -29,9 +38,9 @@ void	plotline_octant_vec(int (*img)[WIN_WIDTH], t_vec2 p0, t_vec2 p1,
 	while (x < p1.x)
 	{
 		if (fsp == 1)
-			img[ABS(x)][ABS(y)] = 0x00FFFFFF;
+			img[ABS(x)][ABS(y)] = color;
 		else
-			img[ABS(y)][ABS(x)] = 0x00FFFFFF;
+			img[ABS(y)][ABS(x)] = color;
 		if (d > 0)
 		{
 			y++;
@@ -42,7 +51,7 @@ void	plotline_octant_vec(int (*img)[WIN_WIDTH], t_vec2 p0, t_vec2 p1,
 	}
 }
 
-void	plotline_vec(int (*img)[WIN_WIDTH], t_vec2 p0, t_vec2 p1)
+void	plotline_vec(int (*img)[WIN_WIDTH], t_vec2 p0, t_vec2 p1, int color)
 {
 	int		fsp;
 
@@ -63,5 +72,5 @@ void	plotline_vec(int (*img)[WIN_WIDTH], t_vec2 p0, t_vec2 p1)
 		ft_swap(&(p1.x), &(p1.y));
 		fsp = 1;
 	}
-	plotline_octant_vec(img, p0, p1, fsp);
+	plotline_octant_vec(img, p0, p1, fsp, color);
 }
