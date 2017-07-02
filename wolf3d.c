@@ -97,6 +97,8 @@ void	raycast(t_world *world, t_player *playe)
 		slope.y = fabs(diff.y / diff.x);
 		delta.x = slope.x * (diff.x / fabs(diff.x));
 		delta.y = diff.y / fabs(diff.y);
+		t_vec start;
+		start.x = 0;
 		hit = dda(world, ray, delta);
 		delta.x = diff.x / fabs(diff.x);
 		delta.y = slope.y * (diff.y / fabs(diff.y));
