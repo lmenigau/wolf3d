@@ -93,6 +93,8 @@ void	raycast(t_world *world, t_player *playe)
 	x = 0;
 	while (x < WIN_W)
 	{
+	int vdec = 1;
+	int hdec = 1;
 		ray.x = playe->pos.x + playe->dir.x ;
 		ray.y = playe->pos.y + playe->dir.y ;
 		ray.x += playe->cam.x * ((x - WIN_W /2.0)/(double)WIN_W);
@@ -104,11 +106,12 @@ void	raycast(t_world *world, t_player *playe)
 		slope.y = fabs(diff.y / diff.x);
 		delta.x = slope.x * (diff.x / fabs(diff.x));
 		delta.y = diff.y / fabs(diff.y);
-		start.y = floor(pos.y + delta.y);
-		if (delta.x < 0 && delta.y > 0)
+		if ((delta.x < 0 && delta.y > 0)|| (delta.x > 0 && delta.y < 0))
+		{
 			slope.x = -slope.x;
-		else if (delta.x > 0 && delta.y < 0)
-			slope.x = -slope.x;
+			hdec = -1;
+		}
+		start.y = round(pos.y + hdec);
 		start.x = (start.y - pos.y) * slope.x  + pos.x;
 		hit.x = -1;
 		if ((start.x >= 0 && start.x < world->size.x - 1
@@ -119,11 +122,12 @@ void	raycast(t_world *world, t_player *playe)
 		}
 		delta2.x = diff.x / fabs(diff.x);
 		delta2.y = slope.y * (diff.y / fabs(diff.y));
-		start2.x = floor(pos.x + delta2.x);
-		if (delta2.x < 0 && delta2.y > 0)
+		if ((delta2.x < 0 && delta2.y > 0) || (delta2.x > 0 && delta2.y < 0))
+		{
 			slope.y = -slope.y;
-		else if (delta2.x > 0 && delta2.y < 0)
-			slope.y = -slope.y;
+			vdec = -1;
+		}
+		start2.x = round(pos.x + vdec);
 		start2.y = (start2.x - pos.x) * slope.y + pos.y;
 		hit2.x = -1;
 		if ((start2.x >= 0 && start2.x < world->size.x - 1
@@ -143,7 +147,7 @@ void	raycast(t_world *world, t_player *playe)
 		if (len1 < len2 )
 		{
 			if (hit.x != -1) {
-				draw_wall(world, playe, ray, hit, x, color);
+				draw_wall(world, playe, pos, hit, x, color);
 				/* plotline_vec(world->debug, (t_vec2){project(hit.x), project(hit.y) }, */
 				/* 		(t_vec2){project(ray.x), project(ray.y)}, color); */
 			}
@@ -151,7 +155,7 @@ void	raycast(t_world *world, t_player *playe)
 		else
 		{
 			if (hit2.x != -1) {
-				draw_wall(world, playe, ray, hit2, x, color);
+				draw_wall(world, playe, pos, hit2, x, color);
 				/* plotline_vec(world->debug, (t_vec2){project(hit2.x), project(hit2.y) }, */
 				/* 		(t_vec2){project(ray.x), project(ray.y)}, color); */
 			}
