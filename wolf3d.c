@@ -119,8 +119,8 @@ void	raycast(t_world *world, t_player *playe)
 		if ((start.x >= 0 && start.x < world->size.x
 					&& start.y >= 0 && start.y < world->size.y))
 		{
-			world->debug[project(start.y)][project(start.x)] = 0xFFF0FF;
 			hit = dda(world, start, delta, dir);
+			world->debug[project(start.y)][project(start.x)] = 0xFFF0FF;
 		}
 		dir = (t_vec2){0, 0};
 		delta2.x = diff.x / fabs(diff.x);
@@ -140,10 +140,10 @@ void	raycast(t_world *world, t_player *playe)
 			hit2 = dda(world, start2, delta2, dir);
 			world->debug[project(start2.y)][project(start2.x)] = 0xFF00FF;
 		}
-		int len1 = 1000;
-		int len2 = 1000;
-		len1 = fabs(hit.x - pos.x);
-		len2 = fabs(hit2.y - pos.y);
+		double len1 = 1000;
+		double len2 = 1000;
+		len1 = distance(hit, pos);
+		len2 = distance(hit2, pos);
 		if (len1 < len2 )
 		{
 			if (hit.x != -1)
