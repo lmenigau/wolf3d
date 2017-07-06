@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 #include "wolf3d.h"
 #include "fdf.h"
-
 #include <stdio.h> //
 
 int		project(double x)
@@ -19,28 +18,23 @@ int		project(double x)
 		return (x * (1080 / 50) + 10);
 }
 
-t_vec		dda(t_world *world, t_vec ray, t_vec delta)
+t_vec		dda(t_world *world, t_vec ray, t_vec delta, t_vec2 dir)
 {
 	char	(*map)[50];
 
 	map = (char (*)[50])world->map;
-	map[15][27] = 'X';
-	map[25][30] = 'X';
-	while (ray.x >= 0 && ray.x < world->size.x
-			&& ray.y >= 0 && ray.y < world->size.y)
+	while (ray.x >= 0 && ray.x < world->size.x - 1
+			&& ray.y >= 0 && ray.y < world->size.y - 1)
 	{
 		world->debug[project(ray.y)][project(ray.x)] = 0xF0FF33;
-		if(map[(int)(ray.y)][(int)(ray.x)] != ' ')
+		if(map[(int)(ray.y) + dir.y][(int)(ray.x) + dir.x] != ' ')
 		{
-			/* printf("ray: %d %d double:", (int)ray.x, (int)ray.y); */
-			/* printf("ray: %f %f\n", ray.x, ray.y); */
-			/* printf("delta: %f %f\n", delta.x, delta.y); */
+			world->debug[project(ray.y)][project(ray.x)] = 0xFF0000;
 			return (ray);
 		}
 		ray.x += delta.x;
 		ray.y += delta.y;
 	}
-	//printf("\n\n\ncharhti: %c\n", map[(int)(ray.y)][(int)(ray.x)]);
 	return (ray);
 }
 
@@ -55,15 +49,21 @@ void	draw_wall(t_world *world, t_player *player, t_vec ray, t_vec hit, int col, 
 	total.x = fabs(hit.x - ray.x);
 	total.y = fabs(hit.y - ray.y);
 	lenray = sqrtf(total.x * total.x + total.y * total.y);
-	//printf("%f, %f\n", hit.x, hit.y);
-	len =  ((double)WIN_H / lenray * WIN_W / WIN_H);
-	//printf("%f\n", lenray);
+	len = ((double)WIN_H / lenray * WIN_W / WIN_H);
 	y = (WIN_H / 2) - len / 2;
 	while (y >= 0 && y < WIN_H && y <= len / 2 + WIN_H / 2)
 	{
 		world->screen[y][col] = color;
 		y++;
 	}
+}
+
+double	distanceman(t_vec a, t_vec b)
+{
+	t_vec total;
+	total.x = fabs(a.x - b.x);
+	total.y = fabs(a.y - b.y);
+	return (total.x + total.y);
 }
 
 double	distance(t_vec a, t_vec b)
@@ -76,8 +76,7 @@ double	distance(t_vec a, t_vec b)
 
 void	raycast(t_world *world, t_player *playe)
 {
-	int x;
-	int color;
+	int		x;
 	t_vec	ray;
 	t_vec	diff;
 	t_vec	slope;
@@ -85,16 +84,18 @@ void	raycast(t_world *world, t_player *playe)
 	t_vec	delta;
 	t_vec	delta2;
 	t_vec	hit2;
-	t_vec	 start;
-	t_vec	 start2;
-
+	t_vec	start;
+	t_vec	start2;
 	t_vec	pos;
+
 	pos = playe->pos;
 	x = 0;
 	while (x < WIN_W)
 	{
-	int vdec = 1;
-	int hdec = 1;
+		t_vec2 dec;
+		t_vec2 dir;
+		dec = (t_vec2){1, 1};
+		dir = (t_vec2){0, 0};
 		ray.x = playe->pos.x + playe->dir.x ;
 		ray.y = playe->pos.y + playe->dir.y ;
 		ray.x += playe->cam.x * ((x - WIN_W /2.0)/(double)WIN_W);
@@ -106,57 +107,52 @@ void	raycast(t_world *world, t_player *playe)
 		slope.y = fabs(diff.y / diff.x);
 		delta.x = slope.x * (diff.x / fabs(diff.x));
 		delta.y = diff.y / fabs(diff.y);
-		if ((delta.x < 0 && delta.y > 0)|| (delta.x > 0 && delta.y < 0))
+		if ((delta.x > 0 && delta.y < 0) || (delta.x < 0 && delta.y > 0))
 			slope.x = -slope.x;
 		if (delta.y < 0)
-			hdec = -1;
-		start.y = round(pos.y + hdec);
+			dec.y = -1;
+		start.y = round(pos.y + dec.y);
 		start.x = (start.y - pos.y) * slope.x  + pos.x;
-		hit.x = -1;
+		hit = (t_vec){-1, -1};
+		if (delta.y < 0)
+			dir.y = -1;
 		if ((start.x >= 0 && start.x < world->size.x
 					&& start.y >= 0 && start.y < world->size.y))
 		{
-			world->debug[project(start.y)][project(start.x)] = 0xFFFFFF;
-			hit = dda(world, start, delta);
+			world->debug[project(start.y)][project(start.x)] = 0xFFF0FF;
+			hit = dda(world, start, delta, dir);
 		}
+		dir = (t_vec2){0, 0};
 		delta2.x = diff.x / fabs(diff.x);
 		delta2.y = slope.y * (diff.y / fabs(diff.y));
-		if ((delta2.x < 0 && delta2.y > 0) || (delta2.x > 0 && delta2.y < 0))
+		if ((delta2.x > 0 && delta2.y < 0) || (delta2.x < 0 && delta2.y > 0))
 			slope.y = -slope.y;
 		if (delta2.x < 0)
-			vdec = -1;
-		start2.x = round(pos.x + vdec);
+			dec.x = -1;
+		start2.x = round(pos.x + dec.x);
 		start2.y = (start2.x - pos.x) * slope.y + pos.y;
-		hit2.x = -1;
+		hit2 = (t_vec){-1, -1};
+		if (delta.x < 0)
+			dir.x = -1;
 		if ((start2.x >= 0 && start2.x < world->size.x
 					&& start2.y >= 0 && start2.y < world->size.y))
 		{
-			hit2 = dda(world, start2, delta2);
+			hit2 = dda(world, start2, delta2, dir);
 			world->debug[project(start2.y)][project(start2.x)] = 0xFF00FF;
 		}
-		if (fabs(delta.x) > fabs(delta2.y))
-			color = 0xff;
-		else
-			color = 0xffff;
-		int len1;
-		int len2;
-		len1 = distance(hit, pos);
-		len2 = distance(hit2, pos);
+		int len1 = 1000;
+		int len2 = 1000;
+		len1 = fabs(hit.x - pos.x);
+		len2 = fabs(hit2.y - pos.y);
 		if (len1 < len2 )
 		{
-			if (hit.x != -1) {
-				draw_wall(world, playe, pos, hit, x, color);
-				/* plotline_vec(world->debug, (t_vec2){project(hit.x), project(hit.y) }, */
-				/* 		(t_vec2){project(ray.x), project(ray.y)}, color); */
-			}
+			if (hit.x != -1)
+				draw_wall(world, playe, pos, hit, x, 0xFF);
 		}
 		else
 		{
-			if (hit2.x != -1) {
-				draw_wall(world, playe, pos, hit2, x, color);
-				/* plotline_vec(world->debug, (t_vec2){project(hit2.x), project(hit2.y) }, */
-				/* 		(t_vec2){project(ray.x), project(ray.y)}, color); */
-			}
+			if (hit2.x != -1)
+				draw_wall(world, playe, pos, hit2, x, 0xFFFF);
 		}
 		x++;
 	}
@@ -175,7 +171,6 @@ void		render(t_data *data)
 	world->screen = (int (*)[])mlx_get_data_addr(img, &shit, &shit, &shit);
 	world->debug = (int (*)[])mlx_get_data_addr(imgd, &shit, &shit, &shit);
 	raycast(&data->world, &data->player);
-	//	printf("End\n");
 	mlx_put_image_to_window(data->mlx, data->win, img, 0, 0);
 	mlx_put_image_to_window(data->mlx, data->wind, imgd, 0, 0);
 	mlx_destroy_image(data->mlx, img);
