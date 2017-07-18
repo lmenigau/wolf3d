@@ -38,17 +38,11 @@ t_vec		dda(t_world *world, t_vec ray, t_vec delta, t_vec2 dir)
 	return (ray);
 }
 
-void	draw_wall(t_world *world, t_player *player, t_vec ray, t_vec hit, int col, int color)
+void	draw_wall(t_world *world, double lenray, int col, int color)
 {
 	int 	len;
-	double	lenray;
-	t_vec	total;
 	int		y;
 
-	(void)player;
-	total.x = fabs(hit.x - ray.x);
-	total.y = fabs(hit.y - ray.y);
-	lenray = sqrtf(total.x * total.x + total.y * total.y);
 	len = ((double)WIN_H / lenray * WIN_W / WIN_H);
 	y = (WIN_H / 2) - len / 2;
 	while (y >= 0 && y < WIN_H && y <= len / 2 + WIN_H / 2)
@@ -149,12 +143,12 @@ void	raycast(t_world *world, t_player *playe)
 		if (len1 < len2 )
 		{
 			if (hit.x != -1)
-				draw_wall(world, playe, pos, hit, x, 0xFF);
+				draw_wall(world, len1, x, 0xFF);
 		}
 		else
 		{
 			if (hit2.x != -1)
-				draw_wall(world, playe, pos, hit2, x, 0xFFFF);
+				draw_wall(world, len2, x, 0xFFFF);
 		}
 		x++;
 	}
