@@ -23,8 +23,8 @@ t_vec		dda(t_world *world, t_vec ray, t_vec delta, t_vec2 dir)
 	char	(*map)[50];
 
 	map = (char (*)[50])world->map;
-	while (ray.x >= 0 && ray.x < world->size.x - 1
-			&& ray.y >= 0 && ray.y < world->size.y - 1)
+	while (ray.x >= 0 && ray.x <= world->size.x
+			&& ray.y >= 0 && ray.y <= world->size.y)
 	{
 		world->debug[project(ray.y)][project(ray.x)] = 0xF0FF33;
 		if(map[(int)(ray.y) + dir.y][(int)(ray.x) + dir.x] != ' ')
@@ -116,8 +116,8 @@ void	raycast(t_world *world, t_player *playe)
 		hit = (t_vec){-1, -1};
 		if (delta.y < 0)
 			dir.y = -1;
-		if ((start.x >= 0 && start.x < world->size.x
-					&& start.y >= 0 && start.y < world->size.y))
+		if ((start.x >= 0 && start.x <= world->size.x
+					&& start.y >= 0 && start.y <= world->size.y))
 		{
 			hit = dda(world, start, delta, dir);
 			world->debug[project(start.y)][project(start.x)] = 0xFFF0FF;
@@ -140,10 +140,12 @@ void	raycast(t_world *world, t_player *playe)
 			hit2 = dda(world, start2, delta2, dir);
 			world->debug[project(start2.y)][project(start2.x)] = 0xFF00FF;
 		}
-		double len1 = 1000;
-		double len2 = 1000;
-		len1 = distance(hit, pos);
-		len2 = distance(hit2, pos);
+		double len1 = 10000;
+		double len2 = 10000;
+		if (hit.x != -1)
+			len1 = distance(hit, pos);
+		if (hit2.x != -1)
+			len2 = distance(hit2, pos);
 		if (len1 < len2 )
 		{
 			if (hit.x != -1)
@@ -216,6 +218,10 @@ void	key_hook(int keycode, t_data *data)
 	}
 }
 
+void mouse_hook(int x, int y)
+{
+	printf ("%d, %d\n", x, y);
+}
 int			main(int	argc, char **argv)
 {
 	t_data		data;
@@ -226,12 +232,13 @@ int			main(int	argc, char **argv)
 	data.world.map = init_world();
 	data.world.size = (t_vec){50, 50};
 	data.player.pos = (t_vec){25.1, 2.2};
-	data.player.dir = ((t_vec){0, 0.7});
-	data.player.cam = ((t_vec){0.7, 0});
+	data.player.dir = ((t_vec){0, 0.5});
+	data.player.cam = ((t_vec){0.5, 0});
 	data.mlx = mlx_init();
 	data.win = mlx_new_window(data.mlx, WIN_W, WIN_H, "wolf3d");
 	data.wind = mlx_new_window(data.mlx, WIN_W, WIN_H, "debug");
 	mlx_hook(data.win,2, 0, (int (*)())key_hook, &data);
+	mlx_hook(data.win,6, 0, (int (*)())mouse_hook, &data);
 	render(&data);
 	mlx_loop(data.mlx);
 }
