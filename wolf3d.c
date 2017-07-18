@@ -110,8 +110,8 @@ void	raycast(t_world *world, t_player *playe)
 		if ((delta.x > 0 && delta.y < 0) || (delta.x < 0 && delta.y > 0))
 			slope.x = -slope.x;
 		if (delta.y < 0)
-			dec.y = -1;
-		start.y = round(pos.y + dec.y);
+			dec.y = 0;
+		start.y = floor(pos.y + dec.y);
 		start.x = (start.y - pos.y) * slope.x  + pos.x;
 		hit = (t_vec){-1, -1};
 		if (delta.y < 0)
@@ -128,14 +128,14 @@ void	raycast(t_world *world, t_player *playe)
 		if ((delta2.x > 0 && delta2.y < 0) || (delta2.x < 0 && delta2.y > 0))
 			slope.y = -slope.y;
 		if (delta2.x < 0)
-			dec.x = -1;
-		start2.x = round(pos.x + dec.x);
+			dec.x = 0;
+		start2.x = floor(pos.x + dec.x);
 		start2.y = (start2.x - pos.x) * slope.y + pos.y;
 		hit2 = (t_vec){-1, -1};
-		if (delta.x < 0)
+		if (delta2.x < 0)
 			dir.x = -1;
-		if ((start2.x >= 0 && start2.x < world->size.x
-					&& start2.y >= 0 && start2.y < world->size.y))
+		if ((start2.x >= 0 && start2.x <= world->size.x
+					&& start2.y >= 0 && start2.y <= world->size.y))
 		{
 			hit2 = dda(world, start2, delta2, dir);
 			world->debug[project(start2.y)][project(start2.x)] = 0xFF00FF;
