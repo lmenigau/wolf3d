@@ -134,8 +134,8 @@ void	raycast(t_world *world, t_player *playe)
 			hit2 = dda(world, start2, delta2, dir);
 			world->debug[project(start2.y)][project(start2.x)] = 0xFF00FF;
 		}
-		double len1 = 10000;
-		double len2 = 10000;
+		double len1 = 20000;
+		double len2 = 20000;
 		if (hit.x != -1)
 			len1 = distance(hit, pos);
 		if (hit2.x != -1)
@@ -143,12 +143,12 @@ void	raycast(t_world *world, t_player *playe)
 		if (len1 < len2 )
 		{
 			if (hit.x != -1)
-				draw_wall(world, len1, x, 0xFF);
+				draw_wall(world, len1 / distance(pos, ray), x, 0xFF);
 		}
 		else
 		{
 			if (hit2.x != -1)
-				draw_wall(world, len2, x, 0xFFFF);
+				draw_wall(world, len2 / distance(pos,ray), x, 0xFFFF);
 		}
 		x++;
 	}
