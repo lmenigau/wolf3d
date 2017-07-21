@@ -137,18 +137,18 @@ void	raycast(t_world *world, t_player *playe)
 		double len1 = 20000;
 		double len2 = 20000;
 		if (hit.x != -1)
-			len1 = distance(hit, pos);
+			len1 = distance(hit, pos) / distance(pos, ray);
 		if (hit2.x != -1)
-			len2 = distance(hit2, pos);
+			len2 = distance(hit2, pos) / distance(pos, ray);
 		if (len1 < len2 )
 		{
 			if (hit.x != -1)
-				draw_wall(world, len1 / distance(pos, ray), x, 0xFF);
+				draw_wall(world, len1, x, 0xFF);
 		}
 		else
 		{
 			if (hit2.x != -1)
-				draw_wall(world, len2 / distance(pos,ray), x, 0xFFFF);
+				draw_wall(world, len2, x, 0xFFFF);
 		}
 		x++;
 	}
@@ -226,8 +226,8 @@ int			main(int	argc, char **argv)
 	data.world.map = init_world();
 	data.world.size = (t_vec){50, 50};
 	data.player.pos = (t_vec){25.1, 2.2};
-	data.player.dir = ((t_vec){0, 0.5});
-	data.player.cam = ((t_vec){0.5, 0});
+	data.player.dir = ((t_vec){0, 0.8});
+	data.player.cam = ((t_vec){1, 0});
 	data.mlx = mlx_init();
 	data.win = mlx_new_window(data.mlx, WIN_W, WIN_H, "wolf3d");
 	data.wind = mlx_new_window(data.mlx, WIN_W, WIN_H, "debug");
