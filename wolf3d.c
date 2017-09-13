@@ -9,6 +9,7 @@
 /*   Updated: 2017/05/24 20:33:12 by lmenigau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 #include "wolf3d.h"
 #include "fdf.h"
 #include <stdio.h> //
@@ -40,12 +41,14 @@ t_vec		dda(t_world *world, t_vec ray, t_vec delta, t_vec2 dir)
 
 void	draw_wall(t_world *world, double lenray, int col, int color)
 {
-	int 	len;
+	int		len;
 	int		y;
 
-	len = ((double)WIN_H / lenray * WIN_W / WIN_H);
+	len = ((double)WIN_H / lenray) * (WIN_W/(double)WIN_H);
 	y = (WIN_H / 2) - len / 2;
-	while (y >= 0 && y < WIN_H && y <= len / 2 + WIN_H / 2)
+	if (y < 0)
+		y = 0;
+	while (y < WIN_H && y <= len / 2 + WIN_H / 2)
 	{
 		world->screen[y][col] = color;
 		y++;
@@ -55,6 +58,7 @@ void	draw_wall(t_world *world, double lenray, int col, int color)
 double	distanceman(t_vec a, t_vec b)
 {
 	t_vec total;
+
 	total.x = fabs(a.x - b.x);
 	total.y = fabs(a.y - b.y);
 	return (total.x + total.y);
@@ -67,6 +71,90 @@ double	distance(t_vec a, t_vec b)
 	total.y = fabs(a.y - b.y);
 	return (sqrtf(total.x * total.x + total.y * total.y));
 }
+
+t_vec	compute_start(double slope, t_vec diff, t_vec pos, t_world *world)
+{
+		t_vec	delta;
+		t_vec	start;
+		t_vec2 	dir;
+		t_vec2 dec;
+		t_vec hit;
+
+		dir = (t_vec2){0, 0};
+		hit = (t_vec){-1, -1};
+		dec = (t_vec2){1, 1};
+			
+		delta.x = slope / slope;
+		delta.y = diff.y / fabs(diff.y);
+		if ((delta.x > 0 && delta.y < 0) || (delta.x < 0 && delta.y > 0))
+			slope = -slope;
+		(void)diff;
+		if (delta.y < 0 && slope > 1)
+			dec.y = 0;
+		start.y = floor(pos.y + dec.y);
+		start.x = (start.y - pos.y) * slope  + pos.x;
+		if (delta.y < 0 && slope > 1)
+			dir.y = -1;
+		if ((start.x > 0 && start.x < world->size.x
+					&& start.y > 0 && start.y < world->size.y))
+		{
+			if (slope < 1)
+					hit = dda(world, start, delta, dir);
+			else
+					hit = dda(world, (t_vec){start.y, start.x}, delta, dir);
+			world->debug[project(start.y)][project(start.x)] = 0xFFF0FF;
+		}
+		(void)world;
+		return hit;
+}
+
+void	raycast2(t_world *world, t_player *playe)
+{
+	int		x;
+	t_vec	ray;
+	t_vec	diff;
+	t_vec	slope;
+	t_vec	hit;
+	t_vec	hit2;
+	t_vec	pos;
+	double  magicdist;
+
+	pos = playe->pos;
+	x = 0;
+	while (x < WIN_W)
+	{
+		ray.x = playe->pos.x + playe->dir.x ;
+		ray.y = playe->pos.y + playe->dir.y ;
+		ray.x += playe->cam.x * ((x - WIN_W /2.0)/(double)WIN_W);
+		ray.y += playe->cam.y * ((x - WIN_W /2.0)/(double)WIN_W);
+		magicdist = sqrt(playe->dir.x * playe->dir.x + playe->dir.y * playe->dir.y) / (distance(ray, pos));
+		world->debug[project(ray.y)][project(ray.x)] = 0xff0000;
+		diff.x = ray.x - playe->pos.x;
+		diff.y = ray.y - playe->pos.y;
+		slope.x = diff.x / diff.y;
+		slope.y = diff.y / diff.x;
+		hit = compute_start(slope.x, diff, pos, world);
+		hit2 = compute_start(slope.y, (t_vec){diff.y, diff.x}, (t_vec){pos.y, pos.x}, world);
+		double len1 = 20000;
+		double len2 = 20000;
+		if (hit.x != -1)
+			len1 = distance(hit, pos);
+		if (hit2.x != -1)
+			len2 = distance(hit2, pos);
+		if (len1 <= len2 )
+		{
+			if (hit.x != -1)
+				draw_wall(world, len1 * magicdist, x, 0xFF);
+		}
+		else
+		{
+			if (hit2.x != -1)
+				draw_wall(world, len2 * magicdist, x, 0xFFFF);
+		}
+		x++;
+	}
+}
+
 
 void	raycast(t_world *world, t_player *playe)
 {
@@ -81,6 +169,7 @@ void	raycast(t_world *world, t_player *playe)
 	t_vec	start;
 	t_vec	start2;
 	t_vec	pos;
+	double  magicdist;
 
 	pos = playe->pos;
 	x = 0;
@@ -94,6 +183,7 @@ void	raycast(t_world *world, t_player *playe)
 		ray.y = playe->pos.y + playe->dir.y ;
 		ray.x += playe->cam.x * ((x - WIN_W /2.0)/(double)WIN_W);
 		ray.y += playe->cam.y * ((x - WIN_W /2.0)/(double)WIN_W);
+		magicdist = sqrt(playe->dir.x * playe->dir.x + playe->dir.y * playe->dir.y) / (distance(ray, pos));
 		world->debug[project(ray.y)][project(ray.x)] = 0xff0000;
 		diff.x = ray.x - playe->pos.x;
 		diff.y = ray.y - playe->pos.y;
@@ -110,8 +200,8 @@ void	raycast(t_world *world, t_player *playe)
 		hit = (t_vec){-1, -1};
 		if (delta.y < 0)
 			dir.y = -1;
-		if ((start.x >= 0 && start.x <= world->size.x
-					&& start.y >= 0 && start.y <= world->size.y))
+		if ((start.x > 0 && start.x < world->size.x
+					&& start.y > 0 && start.y < world->size.y))
 		{
 			hit = dda(world, start, delta, dir);
 			world->debug[project(start.y)][project(start.x)] = 0xFFF0FF;
@@ -128,8 +218,8 @@ void	raycast(t_world *world, t_player *playe)
 		hit2 = (t_vec){-1, -1};
 		if (delta2.x < 0)
 			dir.x = -1;
-		if ((start2.x >= 0 && start2.x <= world->size.x
-					&& start2.y >= 0 && start2.y <= world->size.y))
+		if ((start2.x > 0 && start2.x < world->size.x
+					&& start2.y > 0 && start2.y < world->size.y))
 		{
 			hit2 = dda(world, start2, delta2, dir);
 			world->debug[project(start2.y)][project(start2.x)] = 0xFF00FF;
@@ -137,18 +227,18 @@ void	raycast(t_world *world, t_player *playe)
 		double len1 = 20000;
 		double len2 = 20000;
 		if (hit.x != -1)
-			len1 = distance(hit, pos) / distance(pos, ray);
+			len1 = distance(hit, pos);
 		if (hit2.x != -1)
-			len2 = distance(hit2, pos) / distance(pos, ray);
-		if (len1 < len2 )
+			len2 = distance(hit2, pos);
+		if (len1 <= len2 )
 		{
 			if (hit.x != -1)
-				draw_wall(world, len1, x, 0xFF);
+				draw_wall(world, len1 * magicdist, x, 0xFF);
 		}
 		else
 		{
 			if (hit2.x != -1)
-				draw_wall(world, len2, x, 0xFFFF);
+				draw_wall(world, len2 * magicdist, x, 0xFFFF);
 		}
 		x++;
 	}
@@ -183,12 +273,12 @@ t_vec		vec_rot(t_vec vec, double angle)
 
 void	key_hook(int keycode, t_data *data)
 {
-	printf("%d\n", keycode);
+	//printf("%d\n", keycode);
 	if (keycode == 126)
 	{
 		data->player.pos.y += data->player.dir.y /3;
 		data->player.pos.x += data->player.dir.x /3;
-		printf("%f, %f\n", data->player.pos.x, data->player.pos.y);
+	//	printf("%f, %f\n", data->player.pos.x, data->player.pos.y);
 		render(data);
 	}
 	if (keycode == 125)
@@ -216,6 +306,7 @@ void mouse_hook(int x, int y)
 {
 	printf ("%d, %d\n", x, y);
 }
+
 int			main(int	argc, char **argv)
 {
 	t_data		data;
@@ -225,8 +316,8 @@ int			main(int	argc, char **argv)
 
 	data.world.map = init_world();
 	data.world.size = (t_vec){50, 50};
-	data.player.pos = (t_vec){25.1, 2.2};
-	data.player.dir = ((t_vec){0, 0.8});
+	data.player.pos = (t_vec){25, 2};
+	data.player.dir = ((t_vec){0, 1});
 	data.player.cam = ((t_vec){1, 0});
 	data.mlx = mlx_init();
 	data.win = mlx_new_window(data.mlx, WIN_W, WIN_H, "wolf3d");
