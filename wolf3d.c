@@ -16,7 +16,7 @@
 
 int		project(double x)
 {
-		return (x * (1080 / 50) + 10);
+	return (x * (1080 / 50) + 10);
 }
 
 t_vec		dda(t_world *world, t_vec ray, t_vec delta, t_vec2 dir)
@@ -57,7 +57,7 @@ void	draw_wall(t_world *world, double lenray, int col, int color)
 
 double	distanceman(t_vec a, t_vec b)
 {
-	t_vec total;
+	t_vec	total;
 
 	total.x = fabs(a.x - b.x);
 	total.y = fabs(a.y - b.y);
@@ -66,7 +66,8 @@ double	distanceman(t_vec a, t_vec b)
 
 double	distance(t_vec a, t_vec b)
 {
-	t_vec total;
+	t_vec	total;
+
 	total.x = fabs(a.x - b.x);
 	total.y = fabs(a.y - b.y);
 	return (sqrtf(total.x * total.x + total.y * total.y));
@@ -74,38 +75,76 @@ double	distance(t_vec a, t_vec b)
 
 t_vec	compute_start(double slope, t_vec diff, t_vec pos, t_world *world)
 {
-		t_vec	delta;
-		t_vec	start;
-		t_vec2 	dir;
-		t_vec2 dec;
-		t_vec hit;
+	t_vec	delta;
+	t_vec	start;
+	t_vec2	dir;
+	t_vec2	dec;
+	t_vec	hit;
 
-		dir = (t_vec2){0, 0};
-		hit = (t_vec){-1, -1};
-		dec = (t_vec2){1, 1};
-			
-		delta.x = slope / slope;
-		delta.y = diff.y / fabs(diff.y);
-		if ((delta.x > 0 && delta.y < 0) || (delta.x < 0 && delta.y > 0))
-			slope = -slope;
-		(void)diff;
-		if (delta.y < 0 && slope > 1)
-			dec.y = 0;
-		start.y = floor(pos.y + dec.y);
-		start.x = (start.y - pos.y) * slope  + pos.x;
-		if (delta.y < 0 && slope > 1)
-			dir.y = -1;
-		if ((start.x > 0 && start.x < world->size.x
-					&& start.y > 0 && start.y < world->size.y))
+	dir = (t_vec2){0, 0};
+	hit = (t_vec){-1, -1};
+	dec = (t_vec2){1, 1};
+
+	delta.x = slope / slope;
+	delta.y = diff.y / fabs(diff.y);
+	if ((delta.x > 0 && delta.y < 0) || (delta.x < 0 && delta.y > 0))
+		slope = -slope;
+	(void)diff;
+	if (delta.y < 0 && slope > 1)
+		dec.y = 0;
+	start.y = floor(pos.y + dec.y);
+	start.x = (start.y - pos.y) * slope  + pos.x;
+	if (delta.y < 0 && slope > 1)
+		dir.y = -1;
+	if ((start.x > 0 && start.x < world->size.x
+				&& start.y > 0 && start.y < world->size.y))
+	{
+		if (slope < 1)
+			hit = dda(world, start, delta, dir);
+		else
+			hit = dda(world, (t_vec){start.y, start.x}, delta, dir);
+		world->debug[project(start.y)][project(start.x)] = 0xFFF0FF;
+	}
+	(void)world;
+	return hit;
+}
+
+t_vec		dda2(t_world *world, t_vec small, t_vec big, t_vec slope,  t_vec dir)
+{
+	char	(*map)[50];
+	double	max;
+
+	map = (char (*)[50])world->map;
+	max = 0;
+	while ( 1)
+	{
+		if (max < fabs(slope.x))
 		{
-			if (slope < 1)
-					hit = dda(world, start, delta, dir);
-			else
-					hit = dda(world, (t_vec){start.y, start.x}, delta, dir);
-			world->debug[project(start.y)][project(start.x)] = 0xFFF0FF;
+			world->debug[project(small.y)][project(small.x)] = 0xFFF0FF;
+			if (map[(int)small.y][(int)small.x] != ' ')
+				return (small);
+			small.x += slope.y;
+			small.y += dir.y;
+			max++;
 		}
-		(void)world;
-		return hit;
+		else
+		{
+			world->debug[project(big.y)][project(big.x)] = 0x00FF3F;
+			if (map[(int)big.y][(int)big.x] != ' ')
+				return (big);
+			big.x += dir.x;
+			big.y += slope.x;
+			max = 0;
+		}
+	}
+	return (t_vec){-1, -1};
+}
+
+int		boundcheck(t_vec vec)
+{
+	if (vec.x > 0 && vec.y > 0 && vec.x <= 50 && vec.y <= 50)
+		return (1);
+	return (0);
 }
 
 void	raycast2(t_world *world, t_player *playe)
@@ -114,43 +153,53 @@ void	raycast2(t_world *world, t_player *playe)
 	t_vec	ray;
 	t_vec	diff;
 	t_vec	slope;
-	t_vec	hit;
-	t_vec	hit2;
 	t_vec	pos;
-	double  magicdist;
+	t_vec	vert;
+	t_vec	horiz;
+	t_vec	hit;
+	double	magicdist;
 
-	pos = playe->pos;
 	x = 0;
+	pos = playe->pos;
 	while (x < WIN_W)
 	{
-		ray.x = playe->pos.x + playe->dir.x ;
-		ray.y = playe->pos.y + playe->dir.y ;
-		ray.x += playe->cam.x * ((x - WIN_W /2.0)/(double)WIN_W);
-		ray.y += playe->cam.y * ((x - WIN_W /2.0)/(double)WIN_W);
+		ray.x = playe->pos.x + playe->dir.x;
+		ray.y = playe->pos.y + playe->dir.y;
+		ray.x += playe->cam.x * ((x - WIN_W / 2.0) / (double)WIN_W);
+		ray.y += playe->cam.y * ((x - WIN_W / 2.0) / (double)WIN_W);
 		magicdist = sqrt(playe->dir.x * playe->dir.x + playe->dir.y * playe->dir.y) / (distance(ray, pos));
 		world->debug[project(ray.y)][project(ray.x)] = 0xff0000;
-		diff.x = ray.x - playe->pos.x;
-		diff.y = ray.y - playe->pos.y;
-		slope.x = diff.x / diff.y;
-		slope.y = diff.y / diff.x;
-		hit = compute_start(slope.x, diff, pos, world);
-		hit2 = compute_start(slope.y, (t_vec){diff.y, diff.x}, (t_vec){pos.y, pos.x}, world);
-		double len1 = 20000;
-		double len2 = 20000;
-		if (hit.x != -1)
-			len1 = distance(hit, pos);
-		if (hit2.x != -1)
-			len2 = distance(hit2, pos);
-		if (len1 <= len2 )
+		diff.x = (ray.x - playe->pos.x);
+		diff.y = (ray.y - playe->pos.y);
+		slope.x = (diff.x) / (diff.y);
+		slope.y = (diff.y) / (diff.x);
+		if (fabs(slope.x) > 50)
+			slope.x = 0;
+		if (fabs(slope.y) > 50)
+			slope.y = 0;
+		t_vec dir = (t_vec) {1, 1};
+		if (diff.x < 0 && diff.y < 0)
+			slope.x = -slope.x;
+		vert= (t_vec){floor(pos.x), (floor(pos.x) - pos.x) * slope.y + pos.y};
+		if (!boundcheck(vert))
+			vert = (t_vec){-1, -1};
+		horiz = (t_vec){(floor(pos.y) - pos.y) * slope.x  + pos.x, floor(pos.y)};
+		if (!boundcheck(horiz))
+			horiz = (t_vec){-1, -1};
+		if (diff.x < 0 && diff.y < 0)
 		{
-			if (hit.x != -1)
-				draw_wall(world, len1 * magicdist, x, 0xFF);
+			dir.x = -1;
+			dir.y = -1;
+			slope.x = -fabs(slope.x);
+			slope.y = -fabs(slope.y);
 		}
+		world->debug[project(vert.y)][project(vert.x)] = 0xFFF0FF;
+		world->debug[project(horiz.y)][project(horiz.x)] = 0x00F0FF;
+		if (fabs(slope.x) > fabs(slope.y))
+			hit = dda2(world, vert, horiz, slope, dir);
 		else
-		{
-			if (hit2.x != -1)
-				draw_wall(world, len2 * magicdist, x, 0xFFFF);
-		}
+			hit = dda2(world, horiz, vert, (t_vec){slope.y, slope.x}, dir);
+		draw_wall(world, distance(hit, pos) * magicdist, x, 0xFF);
 		x++;
 	}
 }
@@ -169,7 +218,7 @@ void	raycast(t_world *world, t_player *playe)
 	t_vec	start;
 	t_vec	start2;
 	t_vec	pos;
-	double  magicdist;
+	double	magicdist;
 
 	pos = playe->pos;
 	x = 0;
@@ -179,8 +228,8 @@ void	raycast(t_world *world, t_player *playe)
 		t_vec2 dir;
 		dec = (t_vec2){1, 1};
 		dir = (t_vec2){0, 0};
-		ray.x = playe->pos.x + playe->dir.x ;
-		ray.y = playe->pos.y + playe->dir.y ;
+		ray.x = playe->pos.x + playe->dir.x;
+		ray.y = playe->pos.y + playe->dir.y;
 		ray.x += playe->cam.x * ((x - WIN_W /2.0)/(double)WIN_W);
 		ray.y += playe->cam.y * ((x - WIN_W /2.0)/(double)WIN_W);
 		magicdist = sqrt(playe->dir.x * playe->dir.x + playe->dir.y * playe->dir.y) / (distance(ray, pos));
@@ -256,16 +305,17 @@ void		render(t_data *data)
 	imgd = mlx_new_image(data->mlx, WIN_W, WIN_H);
 	world->screen = (int (*)[])mlx_get_data_addr(img, &shit, &shit, &shit);
 	world->debug = (int (*)[])mlx_get_data_addr(imgd, &shit, &shit, &shit);
-	raycast(&data->world, &data->player);
+	raycast2(&data->world, &data->player);
 	mlx_put_image_to_window(data->mlx, data->win, img, 0, 0);
 	mlx_put_image_to_window(data->mlx, data->wind, imgd, 0, 0);
 	mlx_destroy_image(data->mlx, img);
 	mlx_destroy_image(data->mlx, imgd);
 }
 
-t_vec		vec_rot(t_vec vec, double angle)
+t_vec	vec_rot(t_vec vec, double angle)
 {
 	t_vec	res;
+
 	res.x = vec.x * cos(angle) - vec.y * sin(angle);
 	res.y = vec.x * sin(angle) + vec.y * cos(angle);
 	return (res);
@@ -278,7 +328,7 @@ void	key_hook(int keycode, t_data *data)
 	{
 		data->player.pos.y += data->player.dir.y /3;
 		data->player.pos.x += data->player.dir.x /3;
-	//	printf("%f, %f\n", data->player.pos.x, data->player.pos.y);
+		//	printf("%f, %f\n", data->player.pos.x, data->player.pos.y);
 		render(data);
 	}
 	if (keycode == 125)
@@ -296,18 +346,18 @@ void	key_hook(int keycode, t_data *data)
 	{
 		data->player.dir = vec_rot(data->player.dir, 0.1);
 		data->player.cam = vec_rot(data->player.cam, 0.1);
-		printf("%f\n", distance((t_vec){0,0}, data->player.cam));
+		printf("%f\n", distance((t_vec){0, 0}, data->player.cam));
 		printf("%f, %f\n", data->player.cam.x, data->player.cam.y);
 		render(data);
 	}
 }
 
-void mouse_hook(int x, int y)
+void	mouse_hook(int x, int y)
 {
 	printf ("%d, %d\n", x, y);
 }
 
-int			main(int	argc, char **argv)
+int		main(int	argc, char **argv)
 {
 	t_data		data;
 
