@@ -27,10 +27,15 @@ typedef struct	s_ivec
 
 typedef struct	s_vec
 {
-	double		x;
-	double		y;
+	float		x;
+	float		y;
 }				t_vec;
 
+typedef struct	s_ray
+{
+	t_vec		start;
+	t_vec		delta;
+}				t_ray;
 typedef struct	s_player
 {
 	t_vec		pos;
