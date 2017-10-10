@@ -88,10 +88,10 @@ t_vec		dda2(t_world *world, t_ray small, t_ray big,  t_vec pos)
 
 	map = (char (*)[50])world->map;
 	maxcount = -1;
-	while (++maxcount < 50)
+	while (++maxcount < 100)
 	{
 		dist = (t_vec){dstman(pos, small.start), dstman(pos, big.start)};
-		if (boundcheck(small.start) &&  dist.x <= dist.y)
+		if (boundcheck(small.start) && dist.x <= dist.y)
 		{
 			if (map[(int)small.start.y][(int)small.start.x] != ' ')
 				return (small.start);
