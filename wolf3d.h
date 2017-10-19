@@ -14,10 +14,13 @@
 # define WOLF3D_H
 
 # include <math.h>
+# include <sys/time.h>
 # include "mlx.h"
 
-# define	WIN_W	1920
-# define	WIN_H	1080
+# define	WIN_W		1920
+# define	WIN_H		1080
+
+# define	MAX_KEY		280
 
 typedef struct	s_ivec
 {
@@ -58,6 +61,7 @@ typedef struct	s_data
 	void		*wind;
 	t_world		world;
 	t_player	player;
+	int			*keys;
 }				t_data;
 
 char	*init_world();
