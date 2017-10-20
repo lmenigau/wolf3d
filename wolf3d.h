@@ -24,8 +24,8 @@
 
 typedef struct	s_ivec
 {
-	int		x;
-	int		y;
+	int			x;
+	int			y;
 }				t_ivec;
 
 typedef struct	s_vec
@@ -38,6 +38,7 @@ typedef struct	s_ray
 {
 	t_vec		start;
 	t_vec		delta;
+	int			dec;
 }				t_ray;
 typedef struct	s_player
 {
@@ -58,6 +59,7 @@ typedef struct	s_data
 {
 	void		*mlx;
 	void		*win;
+	void		*img;
 	void		*wind;
 	t_world		world;
 	t_player	player;
