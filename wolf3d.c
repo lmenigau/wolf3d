@@ -55,15 +55,15 @@ float	distance(t_vec a, t_vec b)
 	return (sqrtf(total.x * total.x + total.y * total.y));
 }
 
-int		check(t_ray ray)
+int		check(t_ray *ray)
 {
-	if (ray.start.x - ray.dec >= 0 && ray.start.y - ray.dec >= 0 &&
-			ray.start.x - ray.dec < 50 && ray.start.y - ray.dec < 50)
+	if (ray->start.x - ray->dec >= 0 && ray->start.y - ray->dec >= 0 &&
+			ray->start.x - ray->dec < 50 && ray->start.y - ray->dec < 50)
 		return (1);
 	return (0);
 }
 
-t_hit		dda2(t_world *world, t_ray rayx, t_ray rayy, t_vec pos)
+t_hit		dda2(t_world *world, t_ray *rayx, t_ray *rayy, t_vec pos)
 {
 	char	(*map)[50];
 	t_vec	dist;
@@ -73,20 +73,20 @@ t_hit		dda2(t_world *world, t_ray rayx, t_ray rayy, t_vec pos)
 	flag = (t_ivec){1, 1};
 	while (flag.x && flag.y)
 	{
-		dist = (t_vec){dstman(pos, rayx.start), dstman(pos, rayy.start)};
+		dist = (t_vec){dstman(pos, rayx->start), dstman(pos, rayy->start)};
 		if (flag.x && dist.x < dist.y && (flag.x = check(rayx)))
 		{
-			if (map[(int)rayx.start.y][(int)rayx.start.x - rayx.dec] != ' ')
-				return ((t_hit){rayx.start, world->colors[rayx.dec]});
-			rayx.start.x += rayx.delta.x;
-			rayx.start.y += rayx.delta.y;
+			if (map[(int)rayx->start.y][(int)rayx->start.x - rayx->dec] != ' ')
+				return ((t_hit){rayx->start, world->colors[rayx->dec]});
+			rayx->start.x += rayx->delta.x;
+			rayx->start.y += rayx->delta.y;
 		}
 		if (flag.y && dist.x >= dist.y && (flag.y = check(rayy)))
 		{
-			if (map[(int)rayy.start.y - rayy.dec][(int)rayy.start.x] != ' ')
-				return ((t_hit){rayy.start, world->colors[rayy.dec + 2]});
-			rayy.start.x += rayy.delta.x;
-			rayy.start.y += rayy.delta.y;
+			if (map[(int)rayy->start.y - rayy->dec][(int)rayy->start.x] != ' ')
+				return ((t_hit){rayy->start, world->colors[rayy->dec + 2]});
+			rayy->start.x += rayy->delta.x;
+			rayy->start.y += rayy->delta.y;
 		}
 	}
 	return ((t_hit){{-1, -1}, 0xff});
@@ -133,15 +133,16 @@ void	raycast2(t_world *world, t_player *play)
 {
 	int		col;
 	t_vec	ray;
-	t_ray	rays[2];
+	t_ray	rayx;
+	t_ray	rayy;
 	t_hit	hit;
 
 	col = 0;
 	while (col < WIN_W)
 	{
 		ray = ray_vector(play, col);
-		build_ray(play->pos, ray, &rays[0], &rays[1]);
-		hit = dda2(world, rays[0], rays[1], play->pos);
+		build_ray(play->pos, ray, &rayx, &rayy);
+		hit = dda2(world, &rayx, &rayy, play->pos);
 		draw_wall(world,
 				distance(hit.hit,
 					play->pos) * play->ndir / distance(ray, play->pos),
@@ -172,13 +173,13 @@ void	key_hook(t_data *data)
 {
 	if (data->keys[126])
 	{
-		data->player.pos.y += data->player.dir.y * 0.1f;
-		data->player.pos.x += data->player.dir.x * 0.1f;
+		data->player.pos.y += data->player.dir.y * 0.2f;
+		data->player.pos.x += data->player.dir.x * 0.2f;
 	}
 	if (data->keys[125])
 	{
-		data->player.pos.y -= data->player.dir.y * 0.1f;
-		data->player.pos.x -= data->player.dir.x * 0.1f;
+		data->player.pos.y -= data->player.dir.y * 0.2f;
+		data->player.pos.x -= data->player.dir.x * 0.2f;
 	}
 	if (data->keys[124])
 	{
@@ -202,11 +203,11 @@ void	key_release(int keycode, int *keys)
 	keys[keycode] = 0;
 }
 
-void 	fps_counter(t_data *data)
+void	fps_counter(t_data *data)
 {
 	static struct timeval	last;
 	static long				frames;
-	struct timeval 			current;
+	struct timeval			current;
 	static char				str[30];
 
 	if (last.tv_sec == 0)
@@ -214,10 +215,9 @@ void 	fps_counter(t_data *data)
 	frames++;
 	gettimeofday(&current, NULL);
 	if ((current.tv_usec - last.tv_usec) +
-			(current.tv_sec - last.tv_sec) * 1000000 > 500000 )
+			(current.tv_sec - last.tv_sec) * 1000000 > 500000)
 	{
-
-		sprintf(str, "%ld", frames * 1000000 / ((current.tv_usec - last.tv_usec) 
+		sprintf(str, "%ld", frames * 1000000 / ((current.tv_usec - last.tv_usec)
 					+ (current.tv_sec - last.tv_sec) * 1000000));
 		last = current;
 		frames = 0;
@@ -225,7 +225,7 @@ void 	fps_counter(t_data *data)
 	mlx_string_put(data->mlx, data->win, 10, 10, 0xFFFFFF, str);
 }
 
-void 	loop(t_data *data)
+void	loop(t_data *data)
 {
 	key_hook(data);
 	render(data);
@@ -236,10 +236,9 @@ void	mouse_hook(int x, int y)
 {
 	(void)x;
 	(void)y;
-	//printf ("%d, %d\n", x, y);
 }
 
-int		main(int	argc, char **argv)
+int		main(int argc, char **argv)
 {
 	t_data			data;
 	static int		keys[MAX_KEY];
@@ -247,11 +246,10 @@ int		main(int	argc, char **argv)
 
 	(void)argc;
 	(void)argv;
-
 	data.keys = keys;
 	data.world.map = init_world();
 	data.world.size = (t_vec){50, 50};
-	data.world.colors= (int [4]){0x426d26, 0xee9a49, 0xff82ab, 0xcd6889};
+	data.world.colors = (int[4]){0x426d26, 0xee9a49, 0xff82ab, 0xcd6889};
 	data.player.pos = (t_vec){25, 2};
 	data.player.dir = vec_rot((t_vec){0, 1}, 0.05f);
 	data.player.cam = vec_rot((t_vec){1.0f, 0}, 0.05f);
@@ -260,10 +258,9 @@ int		main(int	argc, char **argv)
 	data.win = mlx_new_window(data.mlx, WIN_W, WIN_H, "wolf3d");
 	data.img = mlx_new_image(data.mlx, WIN_W, WIN_H);
 	data.world.screen = (int (*)[])mlx_get_data_addr(data.img, &bs, &bs, &bs);
-	//	data.wind = mlx_new_window(data.mlx, WIN_W, WIN_H, "debug");
-	mlx_hook(data.win,2, 0, (int (*)())key_press, keys);
-	mlx_hook(data.win,3, 0, (int (*)())key_release, keys);
-	mlx_hook(data.win,6, 0, (int (*)())mouse_hook, &data);
+	mlx_hook(data.win, 2, 0, (int (*)())key_press, keys);
+	mlx_hook(data.win, 3, 0, (int (*)())key_release, keys);
+	mlx_hook(data.win, 6, 0, (int (*)())mouse_hook, &data);
 	mlx_loop_hook(data.mlx, (int (*)())loop, &data);
 	mlx_loop(data.mlx);
 }

@@ -14,7 +14,7 @@ NAME	= wolf3d
 SRC		= wolf3d.c map.c plotline.c
 OBJ		= $(SRC:.c=.o)
 CFLAGS	= -Weverything  -Wno-missing-prototypes -Wall -Wextra -Werror -Ilibft/ -Iminilibx_macos/\
-			 -g -fsanitize=address -fsanitize=undefined -Ofast -march=native
+			 -g -Ofast -march=native -fsanitize=address -fsanitize=undefined 
 LFLAGS	= -lmlx -framework Appkit -framework OpenGl
 LDFLAGS	= -Llibft/ -Lminilibx_macos/ 
 LIBDIR	= libft/
