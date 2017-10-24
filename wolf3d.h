@@ -17,13 +17,13 @@
 # include <sys/time.h>
 # include "mlx.h"
 
-# define	WIN_W		1920
-# define	WIN_H		1080
+# define WIN_W			1920
+# define WIN_H			1080
 
-# define	H_WIN_W		(1920 / 2)
-# define	H_WIN_H		(1080 / 2)
+# define H_WIN_W		(1920 / 2)
+# define H_WIN_H		(1080 / 2)
 
-# define	MAX_KEY		280
+# define MAX_KEY		280
 
 typedef struct	s_ivec
 {
@@ -49,6 +49,7 @@ typedef struct	s_ray
 	t_vec		delta;
 	int			dec;
 }				t_ray;
+
 typedef struct	s_player
 {
 	t_vec		pos;
@@ -75,8 +76,8 @@ typedef struct	s_data
 	t_world		world;
 	int			*keys;
 	t_player	player;
-	int 		pad;
+	int			pad;
 }				t_data;
 
-char	*init_world();
+char			*init_world();
 #endif
