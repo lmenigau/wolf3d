@@ -6,24 +6,23 @@
 /*   By: lmenigau <lmenigau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/28 18:10:12 by lmenigau          #+#    #+#             */
-/*   Updated: 2017/10/28 18:42:02 by lmenigau         ###   ########.fr       */
+/*   Updated: 2017/10/28 19:04:44 by lmenigau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include	"wolf3d.h"
+#include "wolf3d.h"
 
-float  dstman(t_vec a, t_vec b)
-{
+static float	dstman(t_vec a, t_vec b) {
        return (fabsf(a.x - b.x) + fabsf(a.y - b.y));
 } 
 
-int		check(t_ray *ray, int flag)
+static int		check(t_ray *ray, int flag)
 {
 	if (flag == 0 &&ray->start.x - ray->dec >= 0 && ray->start.y >= 0 &&
 			ray->start.x - ray->dec < 75 && ray->start.y < 22)
 		return (1);
 	else if (flag == 1 && ray->start.x >= 0 && ray->start.y - ray->dec >= 0 &&
-			ray->start.x < 75 && ray->start.y - ray->dec< 22)
+			ray->start.x < 75 && ray->start.y - ray->dec < 22)
 		return (1);
 	return (0);
 }
@@ -54,5 +53,5 @@ t_hit		dda2(t_world *world, t_ray *rayx, t_ray *rayy, t_vec pos)
 			rayy->start.y += rayy->delta.y;
 		}
 	}
-	return ((t_hit){{-1, -1}, 0xff});
+	return ((t_hit){{1000, 1000}, 0x00});
 }
