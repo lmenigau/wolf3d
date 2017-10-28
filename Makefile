@@ -12,7 +12,7 @@
 
 NAME	=	wolf3d
 CC		=	clang
-SRC		=	dda.c drawing.c events.c hooks.c map.c raycasting.c wolf3d.c
+SRC		=	dda.c drawing.c movements.c hooks.c map.c raycasting.c wolf3d.c
 OBJ		= 	$(SRC:.c=.o)
 CFLAGS	=	-Weverything -Wno-missing-prototypes -Wno-strict-prototypes \
 		 	-Wall -Wextra -Werror -Ilibft/ -Iminilibx_macos/\

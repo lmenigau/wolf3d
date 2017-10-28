@@ -1,12 +1,24 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   raycasting.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lmenigau <lmenigau@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2017/10/28 18:11:14 by lmenigau          #+#    #+#             */
+/*   Updated: 2017/10/28 18:11:14 by lmenigau         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "wolf3d.h"
 
 float  distance(t_vec a, t_vec b)
 {
-       t_vec   total;
+	t_vec   total;
 
-       total.x = fabsf(a.x - b.x);
-       total.y = fabsf(a.y - b.y);
-       return (sqrtf(total.x * total.x + total.y * total.y));
+	total.x = fabsf(a.x - b.x);
+	total.y = fabsf(a.y - b.y);
+	return (sqrtf(total.x * total.x + total.y * total.y));
 }
 
 t_vec	ray_vector(t_player *play, int x)

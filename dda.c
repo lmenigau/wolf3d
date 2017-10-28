@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   dda.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lmenigau <lmenigau@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2017/10/28 18:10:12 by lmenigau          #+#    #+#             */
+/*   Updated: 2017/10/28 18:42:02 by lmenigau         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include	"wolf3d.h"
 
 float  dstman(t_vec a, t_vec b)
@@ -8,21 +20,21 @@ float  dstman(t_vec a, t_vec b)
 int		check(t_ray *ray, int flag)
 {
 	if (flag == 0 &&ray->start.x - ray->dec >= 0 && ray->start.y >= 0 &&
-			ray->start.x - ray->dec < 50 && ray->start.y < 50)
+			ray->start.x - ray->dec < 75 && ray->start.y < 22)
 		return (1);
 	else if (flag == 1 && ray->start.x >= 0 && ray->start.y - ray->dec >= 0 &&
-			ray->start.x < 50 && ray->start.y - ray->dec< 50)
+			ray->start.x < 75 && ray->start.y - ray->dec< 22)
 		return (1);
 	return (0);
 }
 
 t_hit		dda2(t_world *world, t_ray *rayx, t_ray *rayy, t_vec pos)
 {
-	char	(*map)[50];
+	char	(*map)[75];
 	t_vec	dist;
 	t_ivec	flag;
 
-	map = (char (*)[50])world->map;
+	map = (char (*)[75])world->map;
 	flag = (t_ivec){1, 1};
 	while (flag.x && flag.y)
 	{
