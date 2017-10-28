@@ -10,11 +10,14 @@
 #*                                                                            *#
 #* ************************************************************************** *#
 
-NAME	= wolf3d
-SRC		= wolf3d.c map.c plotline.c
-OBJ		= $(SRC:.c=.o)
-CFLAGS	= -Weverything  -Wno-missing-prototypes -Wall -Wextra -Werror -Ilibft/ -Iminilibx_macos/\
-			 -g -Ofast -march=native -fsanitize=address -fsanitize=undefined 
+NAME	=	wolf3d
+CC		=	clang
+SRC		=	dda.c drawing.c events.c hooks.c map.c raycasting.c wolf3d.c
+OBJ		= 	$(SRC:.c=.o)
+CFLAGS	=	-Weverything -Wno-missing-prototypes -Wno-strict-prototypes \
+		 	-Wall -Wextra -Werror -Ilibft/ -Iminilibx_macos/\
+		 	-fprofile-instr-generate -fcoverage-mapping -g \
+			-Ofast -march=native  -fsanitize=undefined  #-fsanitize=address
 LFLAGS	= -lmlx -framework Appkit -framework OpenGl
 LDFLAGS	= -Llibft/ -Lminilibx_macos/ 
 LIBDIR	= libft/
