@@ -6,7 +6,7 @@
 /*   By: lmenigau <lmenigau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/28 18:10:16 by lmenigau          #+#    #+#             */
-/*   Updated: 2017/10/28 19:22:05 by lmenigau         ###   ########.fr       */
+/*   Updated: 2017/10/28 19:34:46 by lmenigau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ static char	*ft_itoa(char *str, long n)
 	return (str);
 }
 
-void	fps_counter(t_data *data)
+void		fps_counter(t_data *data)
 {
 	static struct timeval	last;
 	static long				frames;
@@ -59,7 +59,7 @@ void	fps_counter(t_data *data)
 	mlx_string_put(data->mlx, data->win, 10, 10, 0xFFFFFF, str);
 }
 
-void	draw_wall(t_world *world, float lenray, int col, int color)
+void		draw_wall(t_world *world, float lenray, int col, int color)
 {
 	float	len;
 	int		i;
@@ -85,4 +85,3 @@ void	draw_wall(t_world *world, float lenray, int col, int color)
 	while (++y < WIN_H)
 		screen[y][col] = 0x4F7942;
 }
-

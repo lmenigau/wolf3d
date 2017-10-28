@@ -6,7 +6,7 @@
 /*   By: lmenigau <lmenigau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/09 03:52:26 by lmenigau          #+#    #+#             */
-/*   Updated: 2017/05/22 21:08:55 by lmenigau         ###   ########.fr       */
+/*   Updated: 2017/10/28 19:36:01 by lmenigau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,12 +79,12 @@ typedef struct	s_data
 	int			pad;
 }				t_data;
 
-char		*init_world();
-t_vec		vec_rot(t_vec vec, float angle);
-void		raycast2(t_world *world, t_player *play);
-void		key_moves(t_data *data);
-void		fps_counter(t_data *data);
-t_hit		dda2(t_world *world, t_ray *rayx, t_ray *rayy, t_vec pos);
-void		draw_wall(t_world *world, float lenray, int col, int color);
-void		place_hooks(t_data *data);
+char			*init_world();
+t_vec			vec_rot(t_vec vec, float angle);
+void			raycast2(t_world *world, t_player *play);
+void			key_moves(t_data *data);
+void			fps_counter(t_data *data);
+t_hit			dda2(t_world *world, t_ray *rayx, t_ray *rayy, t_vec pos);
+void			draw_wall(t_world *world, float lenray, int col, int color);
+void			place_hooks(t_data *data);
 #endif
