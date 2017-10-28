@@ -6,7 +6,7 @@
 /*   By: lmenigau <lmenigau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/28 18:10:16 by lmenigau          #+#    #+#             */
-/*   Updated: 2017/10/28 18:10:16 by lmenigau         ###   ########.fr       */
+/*   Updated: 2017/10/28 19:22:05 by lmenigau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,12 +77,12 @@ void	draw_wall(t_world *world, float lenray, int col, int color)
 		y = 0;
 	i = -1;
 	while (++i < y)
-		screen[i][col] = 0xb0c4de;
+		screen[i][col] = 0xC4D8E2;
 	y--;
 	while (++y < max)
 		screen[y][col] = color;
 	y--;
 	while (++y < WIN_H)
-		screen[y][col] = 0x32cd32;
+		screen[y][col] = 0x4F7942;
 }
 
