@@ -6,7 +6,7 @@
 #*   By: lmenigau <lmenigau@student.42.fr>          +#+  +:+       +#+        *#
 #*                                                +#+#+#+#+#+   +#+           *#
 #*   Created: 2016/11/18 02:18:30 by lmenigau          #+#    #+#             *#
-#*   Updated: 2017/11/01 07:21:26 by lmenigau         ###   ########.fr       *#
+#*   Updated: 2017/11/01 09:02:27 by lmenigau         ###   ########.fr       *#
 #*                                                                            *#
 #* ************************************************************************** *#
 
@@ -14,7 +14,7 @@ NAME	=	wolf3d
 CC		=	clang
 SRC		=	dda.c drawing.c movements.c hooks.c map.c raycasting.c wolf3d.c
 OBJ		=	$(SRC:.c=.o)
-CFLAGS	=	-Wall -Wextra -Werror -Iminilibx_macos/ -Ofast -march=native
+CFLAGS	=	-Wall -Wextra -Werror -Iminilibx_macos/ -fsanitize=address -g -Ofast -march=native
 LFLAGS	=	-lmlx -framework Appkit -framework OpenGl
 LDFLAGS	=	-Lminilibx_macos/ 
 MLXDIR	=	minilibx_macos
