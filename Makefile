@@ -6,7 +6,7 @@
 #*   By: lmenigau <lmenigau@student.42.fr>          +#+  +:+       +#+        *#
 #*                                                +#+#+#+#+#+   +#+           *#
 #*   Created: 2016/11/18 02:18:30 by lmenigau          #+#    #+#             *#
-#*   Updated: 2017/10/31 16:12:05 by lmenigau         ###   ########.fr       *#
+#*   Updated: 2017/11/01 07:16:11 by lmenigau         ###   ########.fr       *#
 #*                                                                            *#
 #* ************************************************************************** *#
 
@@ -17,20 +17,20 @@ OBJ		=	$(SRC:.c=.o)
 CFLAGS	=	-Wall -Wextra -Werror -Iminilibx_macos/ -Ofast -march=native
 LFLAGS	=	-lmlx -framework Appkit -framework OpenGl
 LDFLAGS	=	-Lminilibx_macos/ 
-MLXA	=	libmlx.a
 MLXDIR	=	minilibx_macos
-MLX		=	$(MLXDIR)/$(MLXA)
+MLX		=	$(MLXDIR)/libmlx.a
+MAKE	=	make
 
-
-.PHONY	:	all clean fclean re lib
+.PHONY	:	all clean fclean re lib	mlx
 
 all		:	$(NAME)
 
 $(NAME)	:	$(OBJ) $(MLX)
 			$(CC) $(CFLAGS) $(LFLAGS) $(LDFLAGS) -o $@ $(OBJ)
 
-$(MLX)	:	$(MLXDIR)
+$(MLX)	:	mlx
 			$(MAKE) -C $(MLXDIR)
+mlx		:
 
 clean	:
 			$(RM) $(OBJ)
