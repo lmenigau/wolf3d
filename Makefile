@@ -6,7 +6,7 @@
 #*   By: lmenigau <lmenigau@student.42.fr>          +#+  +:+       +#+        *#
 #*                                                +#+#+#+#+#+   +#+           *#
 #*   Created: 2016/11/18 02:18:30 by lmenigau          #+#    #+#             *#
-#*   Updated: 2017/11/01 07:16:11 by lmenigau         ###   ########.fr       *#
+#*   Updated: 2017/11/01 07:21:26 by lmenigau         ###   ########.fr       *#
 #*                                                                            *#
 #* ************************************************************************** *#
 
@@ -21,16 +21,16 @@ MLXDIR	=	minilibx_macos
 MLX		=	$(MLXDIR)/libmlx.a
 MAKE	=	make
 
-.PHONY	:	all clean fclean re lib	mlx
+.PHONY	:	all clean fclean re lib
 
 all		:	$(NAME)
 
 $(NAME)	:	$(OBJ) $(MLX)
 			$(CC) $(CFLAGS) $(LFLAGS) $(LDFLAGS) -o $@ $(OBJ)
 
-$(MLX)	:	mlx
+$(MLX)	:	FORCE
 			$(MAKE) -C $(MLXDIR)
-mlx		:
+FORCE:
 
 clean	:
 			$(RM) $(OBJ)
