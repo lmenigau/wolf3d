@@ -6,7 +6,7 @@
 /*   By: lmenigau <lmenigau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/09 03:50:26 by lmenigau          #+#    #+#             */
-/*   Updated: 2017/11/01 09:00:54 by lmenigau         ###   ########.fr       */
+/*   Updated: 2017/11/01 10:48:27 by lmenigau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,9 +42,10 @@ int				main(void)
 	data.keys = keys;
 	data.world.map = init_world();
 	srand((unsigned int)time(NULL));
-	data.world.colors = (int[4]){(int)random() >> 8, rand() >> 8,
-		rand() >> 8, rand() >> 8};
-	data.player.pos = (t_vec){25, 2};
+	srandomdev();
+	data.world.colors = (int[4]){(int)random() >> 8, (int)random() >> 8,
+		(int)random() >> 8, (int)random() >> 8};
+	data.player.pos = (t_vec){10, 2};
 	data.player.dir = vec_rot((t_vec){0, 1}, 0.05f);
 	data.player.cam = vec_rot((t_vec){1.5f, 0}, 0.05f);
 	data.player.ndir = norme(data.player.dir);
