@@ -6,11 +6,12 @@
 /*   By: lmenigau <lmenigau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/28 18:10:16 by lmenigau          #+#    #+#             */
-/*   Updated: 2017/10/28 19:34:46 by lmenigau         ###   ########.fr       */
+/*   Updated: 2022/11/25 05:06:47 by lomeniga         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "wolf3d.h"
+#include <stddef.h>
 
 static char	*ft_itoa(char *str, long n)
 {

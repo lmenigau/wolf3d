@@ -6,12 +6,13 @@
 /*   By: lmenigau <lmenigau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/09 03:50:26 by lmenigau          #+#    #+#             */
-/*   Updated: 2017/11/01 10:48:27 by lmenigau         ###   ########.fr       */
+/*   Updated: 2022/11/25 05:08:08 by lomeniga         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "wolf3d.h"
 #include <stdlib.h>
+#include <time.h>
 
 static float	norme(t_vec vec)
 {
@@ -42,7 +43,7 @@ int				main(void)
 	data.keys = keys;
 	data.world.map = init_world();
 	srand((unsigned int)time(NULL));
-	srandomdev();
+	//srandomdev();
 	data.world.colors = (int[4]){(int)random() >> 8, (int)random() >> 8,
 		(int)random() >> 8, (int)random() >> 8};
 	data.player.pos = (t_vec){10, 2};

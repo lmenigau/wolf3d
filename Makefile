@@ -14,10 +14,10 @@ NAME	=	wolf3d
 CC		=	clang
 SRC		=	dda.c drawing.c movements.c hooks.c map.c raycasting.c wolf3d.c
 OBJ		=	$(SRC:.c=.o)
-CFLAGS	=	-Wall -Wextra -Werror -Iminilibx_macos/ -g -Ofast -march=native
-LFLAGS	=	-lmlx -framework Appkit -framework OpenGl
-LDFLAGS	=	-Lminilibx_macos/ 
-MLXDIR	=	minilibx_macos
+CFLAGS	=	-Wall -Wextra -Werror -Iminilibx-linux/ -g -Ofast -march=native
+LFLAGS	=	-lmlx -lX11 -lXext -lm
+LDFLAGS	=	-Lminilibx-linux/ 
+MLXDIR	=	minilibx-linux
 MLX		=	$(MLXDIR)/libmlx.a
 MAKE	=	make
 
@@ -26,7 +26,7 @@ MAKE	=	make
 all		:	$(NAME)
 
 $(NAME)	:	$(OBJ) $(MLX)
-			$(CC) $(CFLAGS) $(LFLAGS) $(LDFLAGS) -o $@ $(OBJ)
+			$(CC) $(CFLAGS)  -o $@ $(OBJ) $(LFLAGS) $(LDFLAGS)
 
 $(MLX)	:	FORCE
 			$(MAKE) -C $(MLXDIR)
